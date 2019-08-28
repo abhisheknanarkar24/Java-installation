@@ -1,0 +1,33 @@
+#####################################################################################
+# Date            Version            Change
+# 01/03/2019      1.0                created (previous)
+# 11/04/2019      2.0                backlog fixes and new features (current)
+#####################################################################################
+---
+- hosts: "{{ hosts }}"
+  gather_facts: true
+  vars:
+    assets_dir: "{{ lookup('ini', 'CONNECT_APPS_LIN section=Common_Settings file={{ configFile }}') }}"
+    support_software: "{{ lookup('ini', 'SOFTWARE_SOURCE section=Common_Settings file={{ configFile }}') }}/Java"
+    software_dir: "{{ lookup('ini', 'CONNECT_SOFTWARE_LIN section=Common_Settings file={{ configFile }}') }}"
+    java_tar: "{{ lookup('ini', 'JAVA_TAR section=Common_Settings file={{ configFile }}') }}"
+    java_dir: "{{ lookup('ini', 'JAVA_DIR section=Common_Settings file={{ configFile }}') }}"
+    jdk_rpm: "{{ lookup('ini', 'JDK_RPM section=Common_Settings file={{ configFile }}') }}"
+    jdk_version: "{{ lookup('ini', 'JDK_VERSION section=Common_Settings file={{ configFile }}') }}"
+    jdk_install_script: "{{ lookup('ini', 'JDK_INSTALL_SCRIPT section=Common_Settings file={{ configFile }}') }}"
+  tasks:
+  - name: create "{{ assets_dir }}" directory
+    file:
+      path: "{{ item }}"
+      state: directory
+    with_items:
+    - "{{ assets_dir }}/{{ java_dir }}"
+    - "{{ software_dir }}"
+
+  - name: Copy Java setuo to destination machine
+    copy:
+      src: "{{ support_software }}/{{ java_tar }}"
+      dest: "{{ software_dir }}"
+
+  - name: unzip "{{ software_dir }}/{{ java_tar }}"
+    command: 'tar -xvf {{ software_dir }}/{{ java_tar }} -C {{ assets_dir }}/{{ java_dir }} --strip-components=1'

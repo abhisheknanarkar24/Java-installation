@@ -1,0 +1,25 @@
+#####################################################################################
+# Date            Version            Change
+# 01/03/2019      1.0                created (previous)
+# 11/04/2019      2.0                backlog fixes and new features (current)
+#####################################################################################
+---
+
+- hosts: "{{ hosts }}"
+  tasks:
+  - name: Verify java version
+    shell: "java -version"
+    register: output
+    ignore_errors: true
+
+  - name: Print exists message to verify
+    debug:
+      msg: "java exists"
+    when: output.stderr.find("java version") != -1
+
+
+  - name: Print error message
+    debug:
+      msg: "java does not exist"
+    when: output.stderr.find("java version") == -1
+

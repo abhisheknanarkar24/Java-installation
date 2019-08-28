@@ -1,0 +1,25 @@
+#####################################################################################
+# Date            Version            Change
+# 01/03/2019      1.0                created (previous)
+# 11/04/2019      2.0                backlog fixes and new features (current)
+#####################################################################################
+---
+
+- hosts: "{{ hosts }}"
+  vars:
+    assets_dir: "{{ lookup('ini', 'CONNECT_APPS_LIN section=Common_Settings file={{ configFile }}') }}"
+    java_dir: "{{ lookup('ini', 'JAVA_DIR section=Common_Settings file={{ configFile }}') }}"
+
+  tasks:
+    - name: Copy install_java_ubuntu.sh to remote server
+      copy:
+        src: "{{ lookup('ini', 'COMMON_SCRIPTS section=ANSIBLE file={{ configFile }}') }}/install_java_ubuntu.sh"
+        dest: "/tmp/"
+
+    - name: Make script executable
+      shell: chmod +x /tmp/install_java_ubuntu.sh
+ 
+    - name: Running Java installation shell script
+      shell: "sudo /tmp/install_java_ubuntu.sh {{ assets_dir }} {{ java_dir }}"
+      tags:
+        - install_java

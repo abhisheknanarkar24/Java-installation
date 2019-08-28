@@ -1,0 +1,21 @@
+#####################################################################################
+# Date            Version            Change
+# 01/03/2019      1.0                created (previous)
+# 11/04/2019      2.0                backlog fixes and new features (current)
+#####################################################################################
+---
+
+- import_playbook: verifyJava_ubuntu.yml
+  vars: 
+    hosts: "{{ hosts }}"
+
+- import_playbook: installJava_ubuntu.yml
+  vars:
+    hosts: "{{ hosts }}"
+  when: output.stderr.find("java version") == -1
+
+- import_playbook: setJavaEnvVariables_ubuntu.yml
+  vars:
+    hosts: "{{ hosts }}"
+  when: output.stderr.find("java version") == -1
+

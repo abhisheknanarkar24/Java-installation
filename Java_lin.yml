@@ -1,0 +1,10 @@
+#####################################################################################
+# Date            Version            Change
+# 13/05/2019      2.0.1              Created (current)
+#####################################################################################
+--- 
+
+- import_playbook: verifyJava_lin.yml
+
+- import_playbook: installJava_lin.yml
+  when: java_version.stderr.find("java version") == -1

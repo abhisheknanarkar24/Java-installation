@@ -1,0 +1,28 @@
+#####################################################################################
+# Date            Version            Change
+# 13/05/2019      2.0.1              Created (current)
+#####################################################################################
+---
+
+- hosts: "{{ hosts }}"
+  become: "{{ become }}"
+  vars:
+    become: "{{ lookup('ini', 'ANSIBLE_BECOME section=ANSIBLE file={{ configFile }}')}}"
+    assets_dir: "{{ lookup('ini', 'CONNECT_SOFTWARE_LIN section=Common_Settings file={{ configFile }}') }}"
+    support_software: "{{ lookup('ini', 'SOFTWARE_SOURCE section=Common_Settings file={{ configFile }}') }}/Java"
+    jdk_rpm: "{{ lookup('ini', 'JDK_RPM section=Common_Settings file={{ configFile }}') }}"
+  tasks:
+    - name: Creating {{ assets_dir }} directory
+      file:
+        path: "{{ assets_dir }}"
+        state: directory
+
+    - name: Copy jdk rpm to {{ assets_dir }}
+      copy:
+        src: "{{ item }}"
+        dest: "{{ assets_dir }}/"
+      with_items:
+        - "{{ support_software }}/{{ jdk_rpm }}"
+
+    - name: Install {{ jdk_rpm }}
+      shell: "rpm -Uvh {{ assets_dir }}/{{ jdk_rpm }}"

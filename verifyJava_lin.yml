@@ -1,0 +1,14 @@
+#####################################################################################
+# Date            Version            Change
+# 13/05/2019      2.0.1              Created (current)
+#####################################################################################
+---
+
+- hosts: "{{ hosts }}"
+  vars:
+    jvm_maximum_memory: "{{ lookup('ini','JVM_MAXIMUM_MEMORY section=Common_Settings file={{ configFile }}') }}"
+  tasks:
+    - name: Verify if java is installed
+      shell: "java -version -Xmx{{ jvm_maximum_memory }}"
+      register: java_version
+      ignore_errors: true
